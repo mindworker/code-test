@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -18,9 +19,23 @@ func init() {
 }
 
 func main() {
-	fs := http.FileServer(http.Dir("public"))
-	http.Handle("/", fs)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/actions", handleActions)
+	mux.Handle("/", http.FileServer(http.Dir("public")))
 
 	log.Println("Listening on port", Port)
-	http.ListenAndServe(":"+Port, nil)
+	http.ListenAndServe(":"+Port, mux)
+}
+
+func handleActions(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	js := make(map[string]interface{})
+	err := decoder.Decode(&js)
+	if err != nil {
+		WriteError(w, 400, err)
+		return
+	}
+
+	log.Println(js)
 }
