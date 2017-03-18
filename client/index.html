@@ -1,65 +1,39 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Bootstrap 101 Template</title>
+    
+    <title>Payment Screen</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <!-- Latest compiled and minified CSS -->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">      
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <link href="style.css" rel="stylesheet" />
 
-      <!-- Optional theme -->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-
-      <style type="text/css">
-body {
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #eee;
-}
-
-.form-details {
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
-}
-.form-details .form-details-heading,
-.form-details .checkbox {
-  margin-bottom: 10px;
-}
-.form-details .checkbox {
-  font-weight: normal;
-}
-.form-details .form-control {
-  position: relative;
-  height: auto;
-  padding: 10px;
-  font-size: 16px;
-}
-.form-details .form-control:focus {
-  z-index: 2;
-}
-      </style>
+    <!-- TODO use minified version -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.js"></script>
+    <script src="script.js"></script>
   </head>
   <body>
 
+    <div class="container" ng-app="app" ng-controller="formCtrl" ng-paste="paste($event)" resize>
 
-
-    <div class="container">
-
-      <form class="form-details" method="post">
-
+      <form class="form-details" name="payment" method="post" ng-submit="submit()">
         <h2 class="form-details-heading">Details</h2>
 
         <label for="inputEmail" class="sr-only">Email address</label>
         <input type="email" id="inputEmail" class="form-control" 
-        placeholder="Email address" required autofocus>
+               placeholder="Email address" ng-model="email"
+	       ng-keydown="key($event)" required autofocus>
 
         <label for="inputCardNumber" class="sr-only">Card Number</label>
         <input type="text" id="inputCardNumber" class="form-control" 
-        placeholder="Card Number" required>
+               placeholder="Card Number" ng-model="cardNumber"
+	       ng-keydown="key($event)" required>
 
         <label for="inputCVV" class="sr-only">CVV</label>
         <input type="text" id="inputCVV" class="form-control" 
-        placeholder="Security Code" required>
+               placeholder="Security Code" ng-model="cvv"
+	       ng-keydown="key($event)" required>
 
         <div class="checkbox">
           <label>
@@ -71,6 +45,8 @@ body {
       </form>
 
     </div> <!-- /container -->
+
+   
 
   </body>
 </html>
