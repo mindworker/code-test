@@ -11,10 +11,18 @@ import (
 // that this value gets overwritten by the RAV_PORT environment
 var Port = "8080"
 
+// UseCORS tells the Middleware to use CORS. This is for example
+// useful if we want to test the API via Postman or curl
+var UseCORS = false
+
 func init() {
 	port := os.Getenv("RAV_PORT")
 	if port != "" {
 		Port = port
+	}
+
+	if os.Getenv("RAV_USE_CORS") == "true" {
+		UseCORS = true
 	}
 }
 
@@ -24,7 +32,7 @@ func main() {
 	mux.Handle("/", http.FileServer(http.Dir("public")))
 
 	log.Println("Listening on port", Port)
-	http.ListenAndServe(":"+Port, mux)
+	http.ListenAndServe(":"+Port, &Middleware{mux})
 }
 
 func handleActions(w http.ResponseWriter, r *http.Request) {
