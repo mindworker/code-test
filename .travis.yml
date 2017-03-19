@@ -1,0 +1,17 @@
+language: go
+
+go:
+  - 1.5
+  - 1.7
+
+install:
+  - go get -u github.com/golang/lint/golint
+  - go get github.com/GeertJohan/fgt
+  - go get
+
+script:
+  - fgt golint
+
+# speed up git clone
+git:
+  depth: 1
