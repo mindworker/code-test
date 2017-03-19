@@ -9,7 +9,7 @@ func WriteError(w http.ResponseWriter, code int, err error) {
 	w.Write(B(`{"error":"` + err.Error() + `"}`))
 }
 
-// Basdf converts a string to byte array, just used as a shorter alias
+// B converts a string to byte array, just used as a shorter alias
 func B(str string) []byte {
 	return []byte(str)
 }

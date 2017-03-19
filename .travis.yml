@@ -1,16 +1,18 @@
 language: go
 
-go:
-  - 1.5
-  - 1.7
+matrix:
+  include:
+    - go: 1.4
+    - go: 1.7
+      env: LINT=1
 
 install:
-  - go get -u github.com/golang/lint/golint
+  - if [ "$LINT" ]; then go get -u github.com/golang/lint/golint; fi
   - go get github.com/GeertJohan/fgt
   - go get
 
 script:
-  - fgt golint
+  - if [ "$LINT" ]; then fgt golint; fi
 
 # speed up git clone
 git:
