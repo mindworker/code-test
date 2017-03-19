@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 )
 
@@ -18,7 +17,6 @@ func (m *Middleware) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 	// Note that UseCORS is defined in main.go
 	if UseCORS {
-		log.Println("Use CORS")
 		fn = CORSWrapper(fn)
 	}
 

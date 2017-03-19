@@ -22,20 +22,34 @@ func init() {
 	}
 
 	if os.Getenv("RAV_USE_CORS") == "true" {
+		log.Println("Using CORS")
 		UseCORS = true
 	}
 }
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/actions", handleActions)
+	mux.HandleFunc("/sessions", createSessionHandler)
+	mux.HandleFunc("/actions", addActionHandler)
 	mux.Handle("/", http.FileServer(http.Dir("public")))
 
 	log.Println("Listening on port", Port)
 	http.ListenAndServe(":"+Port, &Middleware{mux})
 }
 
-func handleActions(w http.ResponseWriter, r *http.Request) {
+func createSessionHandler(w http.ResponseWriter, r *http.Request) {
+	sessionID, err := MakeSessionID()
+	if err != nil {
+		WriteError(w, 500, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	w.Write(B(`{"session":"` + sessionID + `"}`))
+}
+
+func addActionHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	js := make(map[string]interface{})

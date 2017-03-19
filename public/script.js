@@ -1,9 +1,18 @@
 var app = angular.module('app', []);
 
-app.controller('formCtrl', function($scope, $window) {
+app.controller('formCtrl', function($scope, $window, $http) {
   $scope.width = $window.innerWidth;
   $scope.height = $window.innerHeight;
 
+  $http.post("/sessions")
+       .then(function(resp){
+	 $scope.sessionID = resp.data.session;
+       }, function(err) {
+	 // @TODO handle error gracefully
+	 alert(err);
+       });
+
+  
   $scope.paste = function(event) {
     console.log(event.target.id);
   }
@@ -22,6 +31,7 @@ app.controller('formCtrl', function($scope, $window) {
     }
   }
 
+  // @TODO disable form on submit
   $scope.submit = function() {
     var timeTaken = Math.ceil(((new Date())-$scope.timeStarted)/1000);
     console.log("Time taken:", timeTaken);
