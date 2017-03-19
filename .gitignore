@@ -1,0 +1,9 @@
+# binaries
+code-test
+
+# Emacs related temporary files
+*~
+*#
+
+# Mac related
+.DS_Store

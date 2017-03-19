@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 // Port defines the port on which the http server will bind to. Note
@@ -27,6 +28,10 @@ func init() {
 	}
 }
 
+// Sessions defines our SessionManager
+// @TODO might be a good idea to make this a singleton
+var Sessions = NewSessionManager(6 * time.Second)
+
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/sessions", PostOnlyWrapper(createSessionHandler))
@@ -38,7 +43,7 @@ func main() {
 }
 
 func createSessionHandler(w http.ResponseWriter, r *http.Request) {
-	sessionID, err := MakeSessionID()
+	sessionID, err := Sessions.CreateSession()
 	if err != nil {
 		WriteError(w, 500, err)
 		return
@@ -46,18 +51,16 @@ func createSessionHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
-	w.Write(B(`{"session":"` + sessionID + `"}`))
+	w.Write(B(`{"sessionId":"` + sessionID + `"}`))
 }
 
 func addActionHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
-	js := make(map[string]interface{})
-	err := decoder.Decode(&js)
+	data := make(map[string]interface{})
+	err := decoder.Decode(&data)
 	if err != nil {
 		WriteError(w, 400, err)
 		return
 	}
-
-	log.Println(js)
 }

@@ -8,7 +8,7 @@ app.controller('formCtrl', function($scope, $window, $http) {
   }
 
   $http.post("/sessions").then(function(resp){
-    $scope.session = resp.data.session;
+    $scope.session = resp.data.sessionId;
     console.log($scope.session)
     $scope.active = true;
   }, function(err) {

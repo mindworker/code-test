@@ -7,6 +7,29 @@ import (
 	"io"
 )
 
+// Session stores users session data and expected expiry, when the
+// session should be marked for garbage collection
+type Session struct {
+	Data       Data
+	Expiration int64
+}
+
+// Data defines the data we store for a session
+type Data struct {
+	WebsiteURL         string          `json:"websiteUrl"`
+	SessionID          string          `json:"sessionId"`
+	ResizeFrom         Dimension       `json:"resizeFrom"`
+	ResizeTo           Dimension       `json:"resizeTo"`
+	CopyAndPaste       map[string]bool `json:"copyAndPaste"`       // map[fieldId]true
+	FormCompletionTime int             `json:"formCompletionTime"` // Seconds
+}
+
+// Dimension stores window dimensions
+type Dimension struct {
+	Width  string `json:"width"`
+	Height string `json:"height"`
+}
+
 // MakeSessionID creates a random session ID in the following format.
 // XXXXXX-XXXXXX-XXXXXXXXX
 func MakeSessionID() (string, error) {
