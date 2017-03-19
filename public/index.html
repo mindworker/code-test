@@ -18,29 +18,34 @@
     <div class="container" ng-app="app" ng-controller="formCtrl" ng-paste="paste($event)" resize>
       <form class="form-details" name="payment" method="post" ng-submit="submit()">
         <h2 class="form-details-heading">Details</h2>
-
+	<div class="alert alert-danger" ng-show="error">
+	  {{error}}
+	</div>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input type="email" id="inputEmail" class="form-control" 
                placeholder="Email address" ng-model="email"
-	       ng-keydown="key($event)" required autofocus>
+	       ng-keydown="key($event)" ng-disabled="!active"
+	       required autofocus>
 
         <label for="inputCardNumber" class="sr-only">Card Number</label>
         <input type="text" id="inputCardNumber" class="form-control" 
                placeholder="Card Number" ng-model="cardNumber"
-	       ng-keydown="key($event)" required>
+	       ng-keydown="key($event)" ng-disabled="!active" required>
 
         <label for="inputCVV" class="sr-only">CVV</label>
         <input type="text" id="inputCVV" class="form-control" 
                placeholder="Security Code" ng-model="cvv"
-	       ng-keydown="key($event)" required>
+	       ng-keydown="key($event)" ng-disabled="!active" required>
 
         <div class="checkbox">
           <label>
-            <input type="checkbox" value="agree"> Agree to Terms
+            <input type="checkbox" value="agree" ng-disabled="!active"> Agree to Terms
           </label>
         </div>
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-disabled="!active">
+	  Submit
+	</button>
       </form>
 
     </div> <!-- /container -->
