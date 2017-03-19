@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 )
 
@@ -40,6 +41,19 @@ func CORSWrapper(fn http.HandlerFunc) http.HandlerFunc {
 func RestrictionWrapper(fn http.HandlerFunc) http.HandlerFunc {
 	return func(rw http.ResponseWriter, req *http.Request) {
 		rw.Header().Set("Access-Control-Allow-Methods", "POST, GET")
+		fn(rw, req)
+	}
+}
+
+// PostOnlyWrapper will only allow POST as HTTP method and returns
+// status code 404 otherwise
+func PostOnlyWrapper(fn http.HandlerFunc) http.HandlerFunc {
+	return func(rw http.ResponseWriter, req *http.Request) {
+		if req.Method != "POST" {
+			WriteError(rw, 404, errors.New("Not found. Did you mean to use POST?"))
+			return
+		}
+
 		fn(rw, req)
 	}
 }

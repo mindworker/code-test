@@ -29,8 +29,8 @@ func init() {
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/sessions", createSessionHandler)
-	mux.HandleFunc("/actions", addActionHandler)
+	mux.HandleFunc("/sessions", PostOnlyWrapper(createSessionHandler))
+	mux.HandleFunc("/actions", PostOnlyWrapper(addActionHandler))
 	mux.Handle("/", http.FileServer(http.Dir("public")))
 
 	log.Println("Listening on port", Port)
