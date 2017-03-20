@@ -46,34 +46,38 @@ func (m *SessionManager) CreateSession() (string, error) {
 	}
 
 	m.sessions[sessionID] = Session{
-		Data:       Data{},
+		Data:       Data{SessionID: sessionID},
 		Expiration: time.Now().Add(m.expiresIn).Unix(),
 	}
 
 	return sessionID, nil
 }
 
+// ErrSessionNotFound returned when sessionID not listed (anymore)
+// in SessionManager
+var ErrSessionNotFound = errors.New("SessionID does not exists")
+
 // GetSessionData returns data related to session if sessionID is
 // found, errors otherwise
 func (m *SessionManager) GetSessionData(sessionID string) (*Data, error) {
 	data, ok := m.sessions[sessionID]
 	if !ok {
-		return nil, errors.New("SessionID does not exists")
+		return nil, ErrSessionNotFound
 	}
 
 	return &data.Data, nil
 }
 
-// UpdateSession updates the session with new sessionData and renews
+// UpdateSessionData updates the session with new sessionData and renews
 // expiration time as well
-func (m *SessionManager) UpdateSession(sessionID string, sessionData Data) error {
+func (m *SessionManager) UpdateSessionData(sessionID string, sessionData *Data) error {
 	// Check if session actually exist
 	//
 	// Note that we do not need to use a mutex lock here, as we
 	// are simply reading
 	_, ok := m.sessions[sessionID]
 	if !ok {
-		return errors.New("SessionID does not exists")
+		return ErrSessionNotFound
 	}
 
 	// Update session
@@ -81,7 +85,7 @@ func (m *SessionManager) UpdateSession(sessionID string, sessionData Data) error
 	m.sessions[sessionID] = Session{
 		// Renew expiration
 		Expiration: time.Now().Add(m.expiresIn).Unix(),
-		Data:       sessionData,
+		Data:       *sessionData,
 	}
 	m.mu.Unlock()
 
@@ -90,6 +94,9 @@ func (m *SessionManager) UpdateSession(sessionID string, sessionData Data) error
 
 //////////////////////////////////////////////////////////////////////
 /// Code related to cleaning expired sessions
+///
+/// Cleaner is inspired by go-cache package
+/// https://github.com/patrickmn/go-cache/blob/master/cache.go
 
 // Cleaner cleans expired sessions every 5 seconds
 func (m *SessionManager) Cleaner() {
@@ -125,6 +132,4 @@ func (m *SessionManager) Clean() {
 		}
 	}
 	m.mu.Unlock()
-
-	log.Println(m.sessions)
 }
