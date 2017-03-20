@@ -16,18 +16,20 @@ type Session struct {
 
 // Data defines the data we store for a session
 type Data struct {
-	WebsiteURL         string          `json:"websiteUrl"`
-	SessionID          string          `json:"sessionId"`
-	ResizeFrom         Dimension       `json:"resizeFrom"`
-	ResizeTo           Dimension       `json:"resizeTo"`
-	CopyAndPaste       map[string]bool `json:"copyAndPaste"`       // map[fieldId]true
-	FormCompletionTime int             `json:"formCompletionTime"` // Seconds
+	WebsiteURL         string          `json:"websiteUrl,omitempty"`
+	SessionID          string          `json:"sessionId,omitempty"`
+	ResizeFrom         Dimension       `json:"resizeFrom,omitempty"`
+	ResizeTo           Dimension       `json:"resizeTo,omitempty"`
+	CopyAndPaste       map[string]bool `json:"copyAndPaste,omitempty"`       // map[fieldId]true
+	FormCompletionTime int             `json:"formCompletionTime,omitempty"` // Seconds
 }
 
 // Dimension stores window dimensions
+//
+// @TODO not sure why but test requires Width and Height to be strings
 type Dimension struct {
-	Width  string `json:"width"`
-	Height string `json:"height"`
+	Width  string `json:"width,omitempty"`
+	Height string `json:"height,omitempty"`
 }
 
 // MakeSessionID creates a random session ID in the following format.

@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -30,7 +32,7 @@ func init() {
 
 // Sessions defines our SessionManager
 // @TODO might be a good idea to make this a singleton
-var Sessions = NewSessionManager(6 * time.Second)
+var Sessions = NewSessionManager(60 * 60 * time.Second)
 
 func main() {
 	mux := http.NewServeMux()
@@ -54,13 +56,54 @@ func createSessionHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(B(`{"sessionId":"` + sessionID + `"}`))
 }
 
-func addActionHandler(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
+type AddActionReq struct {
+	SessionID  string `json:"sessionId"`
+	WebsiteURL string `json:"websiteUrl"`
+	EventType  string
+}
 
-	data := make(map[string]interface{})
-	err := decoder.Decode(&data)
+func addActionHandler(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		WriteError(w, 400, err)
 		return
 	}
+	defer r.Body.Close()
+
+	var data AddActionReq
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		WriteError(w, 400, err)
+		return
+	}
+
+	sessionData, err := Sessions.GetSessionData(data.SessionID)
+	if err != nil {
+		WriteError(w, 400, err)
+		return
+	}
+
+	switch data.EventType {
+	case "copyAndPaste":
+		err = copyAndPaste(body, sessionData)
+	case "resizeWindow":
+		err = resizeWindow(body, sessionData)
+	case "timeTaken":
+		err = timeTaken(body, sessionData)
+	default:
+		err = errors.New("eventType not recognized")
+	}
+	if err != nil {
+		WriteError(w, 400, err)
+		return
+	}
+
+	sessionData.WebsiteURL = data.WebsiteURL
+	err = Sessions.UpdateSessionData(data.SessionID, sessionData)
+	if err != nil {
+		WriteError(w, 400, err)
+		return
+	}
+
+	PrintJSON(sessionData)
 }

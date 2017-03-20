@@ -2,10 +2,7 @@ var app = angular.module('app', []);
 
 app.controller('formCtrl', function($scope, $window, $http) {
   $scope.websiteUrl = window.location.href
-  $scope.windowSize = {
-    width: $window.innerWidth,
-    height: $window.innerHeight
-  }
+  $scope.windowSize = new Dimension($window.innerWidth, $window.innerHeight)
 
   $http.post("/sessions").then(function(resp){
     $scope.session = resp.data.sessionId;
@@ -24,7 +21,7 @@ app.controller('formCtrl', function($scope, $window, $http) {
 
     $http.post("/actions", body).then(function(){}, function(err) {
       $scope.error = "Send action of " + data.eventType + "failed";
-      console.error(err);
+      console.error(err.data);
     });
   }
   
@@ -69,12 +66,8 @@ app.directive('resize', ['$window', function ($window) {
   function link(scope, element, attrs){
     angular.element($window).bind('resize', function(){
 
-      var newSize = {
-	width: $window.innerWidth,
-	height: $window.innerHeight
-      }
-      console.log("old:", scope.windowSize);
-      console.log("new:", newSize);
+      var newSize = new Dimension($window.innerWidth, $window.innerHeight)
+      console.log("old:", scope.windowSize, "\nnew:", newSize);
 
       scope.sendAction({
 	eventType: "resizeWindow",
@@ -85,8 +78,15 @@ app.directive('resize', ['$window', function ($window) {
       // manuall $digest required as resize event
       // is outside of angular
       scope.$digest();
+
     });
   }
 
   return {link: link};
 }]);
+
+function Dimension(width, height) {
+  // Somehow the code-test requires the dimensions to be strings
+  this.width = String(width);
+  this.height = String(height);
+}

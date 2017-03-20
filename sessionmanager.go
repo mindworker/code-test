@@ -45,8 +45,13 @@ func (m *SessionManager) CreateSession() (string, error) {
 		return "", err
 	}
 
+	data := Data{
+		SessionID:    sessionID,
+		CopyAndPaste: make(map[string]bool),
+	}
+
 	m.sessions[sessionID] = Session{
-		Data:       Data{SessionID: sessionID},
+		Data:       data,
 		Expiration: time.Now().Add(m.expiresIn).Unix(),
 	}
 
