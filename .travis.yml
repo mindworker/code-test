@@ -13,6 +13,7 @@ install:
 
 script:
   - if [ "$LINT" ]; then fgt golint; fi
+  - go test
 
 # speed up git clone
 git:
