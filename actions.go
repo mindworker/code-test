@@ -2,6 +2,7 @@ package main
 
 import "encoding/json"
 
+// CopyAndPasteReq defines the action specific fields
 type CopyAndPasteReq struct {
 	Pasted bool
 	FormID string `json:"formId"`
@@ -18,6 +19,7 @@ func copyAndPaste(body []byte, sessionData *Data) error {
 	return nil
 }
 
+// ResizeWindowReq defines the action specific fields
 type ResizeWindowReq struct {
 	ResizeFrom Dimension
 	ResizeTo   Dimension
@@ -36,6 +38,7 @@ func resizeWindow(body []byte, sessionData *Data) error {
 	return nil
 }
 
+// TimeTakenReq defines the action specific fields
 type TimeTakenReq struct {
 	Time int
 }

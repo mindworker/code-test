@@ -56,6 +56,7 @@ func createSessionHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(B(`{"sessionId":"` + sessionID + `"}`))
 }
 
+// AddActionReq defines commonly used field for all action requests
 type AddActionReq struct {
 	SessionID  string `json:"sessionId"`
 	WebsiteURL string `json:"websiteUrl"`

@@ -12,8 +12,11 @@ install:
   - go get
 
 script:
+  - go vet
   - if [ "$LINT" ]; then fgt golint; fi
   - go test
+  - go test --race
+
 
 # speed up git clone
 git:
