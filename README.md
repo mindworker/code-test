@@ -1,6 +1,54 @@
 Ravelin Code Test
 =================
 
+## Submission Remarks
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/mindworker/code-test)](https://goreportcard.com/report/github.com/mindworker/code-test) [![Build Status](https://travis-ci.org/mindworker/code-test.svg?branch=master)](https://travis-ci.org/mindworker/code-test)
+
+### General Notes
+
+I tried to provide an 'overkill' solution in order to show off my
+implementation skills. Note that I am usually more pragmatic and less
+verbose in my code. In this submission I try to show that I am
+familiar with the following:
+
+ - Web backend development practices
+ - Go concurrency patterns
+ - Unit testing
+ - Continuous Integration
+
+### Other special remarks
+
+*Travis CI* is set up for Go1.4, Go1.7 and JS environment with the
+following:
+
+ * Vetting and Linting for Go and JS
+ * Go unit testing
+ * Go **race condition test**
+
+A *Middleware* is created to conveniently intercept all incoming
+requests and is used for restricting HTTP methods and optional
+CORS. See `middleware.go`
+
+Use *environment variables* to change PORT setting or enable CORS
+
+```
+$ RAV_PORT=5000 ./code-test
+2017/03/21 15:19:46 Listening on port 5000
+
+$ RAV_USE_CORS=true ./code-test
+2017/03/21 15:19:57 Using CORS
+2017/03/21 15:19:57 Listening on port 8080
+```
+
+A SessionManager is created that keeps track of sessions has a
+**build-in background routine** that removes sessions form memory
+which are older than 60 minutes. Otherwise, server would inevitably
+run out of memory. See `sessionmanager.go`.
+
+Unit tests are created for the session manager as this part where it
+is the easiest to make mistakes. See `sessionmanager_test.go`.
+
 ## Summary
 We need an HTTP server that will accept any POST request (JSON) from muliple clients' websites. Each request forms part of a struct (for that particular visitor) that will be printed to the terminal when the struct is fully complete. 
 
