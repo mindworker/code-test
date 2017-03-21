@@ -21,7 +21,8 @@ func TestSessionManagersCreationAndUpdate(t *testing.T) {
 
 	// refData is used as reference to check data integrety
 	refData := &Data{
-		SessionID: sID,
+		SessionID:    sID,
+		CopyAndPaste: make(map[string]bool),
 	}
 
 	// Check if saved data is as expected
