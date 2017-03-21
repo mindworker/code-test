@@ -31,13 +31,16 @@ func init() {
 }
 
 // Sessions defines our SessionManager
-// @TODO might be a good idea to make this a singleton
 var Sessions = NewSessionManager(60 * 60 * time.Second)
 
 func main() {
 	mux := http.NewServeMux()
+
+	// API handlers
 	mux.HandleFunc("/sessions", PostOnlyWrapper(createSessionHandler))
 	mux.HandleFunc("/actions", PostOnlyWrapper(addActionHandler))
+
+	// This is used to serve our frontend
 	mux.Handle("/", http.FileServer(http.Dir("public")))
 
 	log.Println("Listening on port", Port)
@@ -60,7 +63,7 @@ func createSessionHandler(w http.ResponseWriter, r *http.Request) {
 type AddActionReq struct {
 	SessionID  string `json:"sessionId"`
 	WebsiteURL string `json:"websiteUrl"`
-	EventType  string
+	EventType  string `json:"eventType"`
 }
 
 func addActionHandler(w http.ResponseWriter, r *http.Request) {
@@ -81,6 +84,11 @@ func addActionHandler(w http.ResponseWriter, r *http.Request) {
 	sessionData, err := Sessions.GetSessionData(data.SessionID)
 	if err != nil {
 		WriteError(w, 400, err)
+		return
+	}
+
+	// Do nothing if form already submitted
+	if sessionData.FormCompletionTime != 0 {
 		return
 	}
 
@@ -107,4 +115,10 @@ func addActionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	PrintJSON(sessionData)
+	if err != nil {
+		WriteError(w, 400, err)
+		return
+	}
+
+	w.WriteHeader(200)
 }

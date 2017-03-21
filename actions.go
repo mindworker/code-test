@@ -4,7 +4,7 @@ import "encoding/json"
 
 // CopyAndPasteReq defines the action specific fields
 type CopyAndPasteReq struct {
-	Pasted bool
+	Pasted bool   `json:"pasted"`
 	FormID string `json:"formId"`
 }
 
@@ -21,8 +21,8 @@ func copyAndPaste(body []byte, sessionData *Data) error {
 
 // ResizeWindowReq defines the action specific fields
 type ResizeWindowReq struct {
-	ResizeFrom Dimension
-	ResizeTo   Dimension
+	ResizeFrom Dimension `json:"resizeFrom"`
+	ResizeTo   Dimension `json:"resizeTo"`
 }
 
 func resizeWindow(body []byte, sessionData *Data) error {
@@ -40,7 +40,7 @@ func resizeWindow(body []byte, sessionData *Data) error {
 
 // TimeTakenReq defines the action specific fields
 type TimeTakenReq struct {
-	Time int
+	Time int `json:"time"`
 }
 
 func timeTaken(body []byte, sessionData *Data) error {
