@@ -30,14 +30,8 @@ app.controller("formCtrl", function($scope, $window, $http) {
         });
     };
 
-    $scope.key = function(event) {
-    // ignore ctrl and meta (CMD in Macs) key which effectively
-    // ignores copy pasting
-        if (event.ctrlKey || event.metaKey) {
-            return;
-        }
-
-    // Initialize starting time if not done yet
+    $scope.key = function() {
+      // Initialize starting time if not done yet
         if (!$scope.timeStarted) {
             $scope.timeStarted = new Date();
         }
