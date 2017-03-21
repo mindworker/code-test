@@ -62,7 +62,7 @@ func TestSessionManagersCleaner(t *testing.T) {
 
 	_, err = m.GetSessionData(sID)
 	if err != nil {
-		t.Error("Should be able to get session data for %s, but:", sID, err)
+		t.Error("Should be able to get session data for", sID, ", but:", err)
 	}
 
 	// Note that the cleaner is only running every 5s

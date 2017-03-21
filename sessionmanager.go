@@ -17,7 +17,7 @@ import (
 type SessionManager struct {
 	sessions  map[string]Session
 	expiresIn time.Duration
-	mu        sync.Mutex
+	mu        sync.RWMutex
 	stop      chan bool
 }
 
@@ -50,10 +50,12 @@ func (m *SessionManager) CreateSession() (string, error) {
 		CopyAndPaste: make(map[string]bool),
 	}
 
+	m.mu.Lock()
 	m.sessions[sessionID] = Session{
 		Data:       data,
 		Expiration: time.Now().Add(m.expiresIn).Unix(),
 	}
+	m.mu.Unlock()
 
 	return sessionID, nil
 }
@@ -65,28 +67,24 @@ var ErrSessionNotFound = errors.New("SessionID does not exists")
 // GetSessionData returns data related to session if sessionID is
 // found, errors otherwise
 func (m *SessionManager) GetSessionData(sessionID string) (*Data, error) {
+	m.mu.RLock()
 	data, ok := m.sessions[sessionID]
 	if !ok {
 		return nil, ErrSessionNotFound
 	}
-
+	m.mu.RUnlock()
 	return &data.Data, nil
 }
 
 // UpdateSessionData updates the session with new sessionData and renews
 // expiration time as well
 func (m *SessionManager) UpdateSessionData(sessionID string, sessionData *Data) error {
-	// Check if session actually exist
-	//
-	// Note that we do not need to use a mutex lock here, as we
-	// are simply reading
+	m.mu.Lock()
 	_, ok := m.sessions[sessionID]
 	if !ok {
 		return ErrSessionNotFound
 	}
 
-	// Update session
-	m.mu.Lock()
 	m.sessions[sessionID] = Session{
 		// Renew expiration
 		Expiration: time.Now().Add(m.expiresIn).Unix(),
