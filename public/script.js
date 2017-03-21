@@ -6,7 +6,6 @@ app.controller('formCtrl', function($scope, $window, $http) {
 
   $http.post("/sessions").then(function(resp){
     $scope.session = resp.data.sessionId;
-    console.log($scope.session)
     $scope.active = true;
   }, function(err) {
     $scope.error = "Error on getting valid session. Is the backend running? Is this file served by the backend?";
@@ -47,7 +46,6 @@ app.controller('formCtrl', function($scope, $window, $http) {
     }
   }
 
-  // @TODO disable form on submit
   $scope.submit = function() {
     var timeTaken = Math.ceil(((new Date())-$scope.timeStarted)/1000);
     console.log("Time taken:", timeTaken);
@@ -64,21 +62,34 @@ app.controller('formCtrl', function($scope, $window, $http) {
 
 app.directive('resize', ['$window', function ($window) {
   function link(scope, element, attrs){
+    var resizeEvent;
+    
     angular.element($window).bind('resize', function(){
+      // link is going to be called dozens of time, since it get
+      // triggered as soon as the size changes only a bit. To minimize
+      // the number of request sent by the frontend, we try to only send
+      // a resize action when the resize is done (500ms of inactivity)
+      //
+      // Inspired by:
+      // http://alvarotrigo.com/blog/firing-resize-event-only-once-when-resizing-is-finished/
+      clearTimeout(resizeEvent);
+      resizeEvent = setTimeout(doAfterResizeDone, 500);
 
-      var newSize = new Dimension($window.innerWidth, $window.innerHeight)
-      console.log("old:", scope.windowSize, "\nnew:", newSize);
+      function doAfterResizeDone(){
+	var newSize = new Dimension($window.innerWidth, $window.innerHeight)
+	  console.log("old:", scope.windowSize, "\nnew:", newSize);
 
-      scope.sendAction({
-	eventType: "resizeWindow",
-	resizeFrom: scope.windowSize,
-	resizeTo: newSize
-      });
+	scope.sendAction({
+	  eventType: "resizeWindow",
+	  resizeFrom: scope.windowSize,
+	  resizeTo: newSize
+	});
 
-      // manuall $digest required as resize event
-      // is outside of angular
-      scope.$digest();
-
+	// manuall $digest required as resize event
+	// is outside of angular
+	scope.$digest();
+      }
+      
     });
   }
 
