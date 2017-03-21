@@ -44,7 +44,10 @@ func main() {
 	mux.Handle("/", http.FileServer(http.Dir("public")))
 
 	log.Println("Listening on port", Port)
-	http.ListenAndServe(":"+Port, &Middleware{mux})
+	err := http.ListenAndServe(":"+Port, &Middleware{mux})
+	if err != nil {
+		log.Println("Fail to bind port: ", err)
+	}
 }
 
 func createSessionHandler(w http.ResponseWriter, r *http.Request) {

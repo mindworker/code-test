@@ -1,6 +1,23 @@
 Ravelin Code Test
 =================
 
+## Usage
+
+Build project:
+
+```
+$ go build
+```
+
+Run project:
+
+```
+$ ./code-test
+2017/03/21 15:19:57 Listening on port 8080
+```
+
+The frontend will then be served on http://localhost:8080 
+
 ## Submission Remarks
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/mindworker/code-test)](https://goreportcard.com/report/github.com/mindworker/code-test) [![Build Status](https://travis-ci.org/mindworker/code-test.svg?branch=master)](https://travis-ci.org/mindworker/code-test)
